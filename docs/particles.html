@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Particle Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Создание сцены, камеры и рендера
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Генерация частиц
+    const particlesCount = 2000;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particlesCount * 3);
+
+    for (let i = 0; i < particlesCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 20; // Случайное распределение частиц в пространстве
+    }
+
+    particlesGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      color: 0x44ccff,
+      size: 0.1,
+      transparent: true,
+      opacity: 0.8,
+    });
+
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+
+    // Настройка камеры
+    camera.position.z = 10;
+
+    // Управление камерой
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Плавность управления
+
+    // Анимация
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Плавное вращение
+      particles.rotation.y += 0.001;
+
+      // Добавление случайного движения частиц
+      const positionsArray = particlesGeometry.attributes.position.array;
+      for (let i = 0; i < particlesCount * 3; i += 3) {
+        positionsArray[i] += (Math.random() - 0.5) * 0.01;
+        positionsArray[i + 1] += (Math.random() - 0.5) * 0.01;
+        positionsArray[i + 2] += (Math.random() - 0.5) * 0.01;
+      }
+      particlesGeometry.attributes.position.needsUpdate = true;
+
+      // Обновление рендера и управления
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Изменение размера окна
+    window.addEventListener("resize", () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
