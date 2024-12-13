@@ -3,44 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Particles Animation</title>
+  <title>3D Particle Animation</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
   <script>
-    // Сцена, камера, рендерер
+    // Создание сцены, камеры и рендера
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Создание частиц
-    const particlesCount = 5000;
+    // Генерация частиц
+    const particlesCount = 2000;
     const particlesGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 10;
+      positions[i] = (Math.random() - 0.5) * 50; // Случайное распределение частиц
     }
 
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particlesMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
+    particlesGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      color: 0x44ccff,
+      size: 0.3,
+      transparent: true,
+      opacity: 0.8,
+    });
 
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
-    camera.position.z = 5;
+    // Настройка камеры
+    camera.position.z = 50;
+    camera.lookAt(0, 0, 0);
 
+    // Управление камерой
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Плавность управления
+
+    // Анимация
     function animate() {
       requestAnimationFrame(animate);
 
-      particles.rotation.x += 0.001;
-      particles.rotation.y += 0.002;
+      // Плавное вращение
+      particles.rotation.y += 0.001;
 
+      controls.update();
       renderer.render(scene, camera);
     }
     animate();
+
+    // Изменение размера окна
+    window.addEventListener("resize", () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
   </script>
 </body>
 </html>
