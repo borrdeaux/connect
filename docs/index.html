@@ -23,7 +23,7 @@
       0.1,
       1000
     );
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -33,7 +33,7 @@
     const positions = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 20; // Случайное распределение частиц в пространстве
+      positions[i] = (Math.random() - 0.5) * 50; // Случайное распределение частиц
     }
 
     particlesGeometry.setAttribute(
@@ -43,7 +43,7 @@
 
     const particlesMaterial = new THREE.PointsMaterial({
       color: 0x44ccff,
-      size: 0.1,
+      size: 0.3,
       transparent: true,
       opacity: 0.8,
     });
@@ -52,7 +52,8 @@
     scene.add(particles);
 
     // Настройка камеры
-    camera.position.z = 10;
+    camera.position.z = 50;
+    camera.lookAt(0, 0, 0);
 
     // Управление камерой
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -65,16 +66,6 @@
       // Плавное вращение
       particles.rotation.y += 0.001;
 
-      // Добавление случайного движения частиц
-      const positionsArray = particlesGeometry.attributes.position.array;
-      for (let i = 0; i < particlesCount * 3; i += 3) {
-        positionsArray[i] += (Math.random() - 0.5) * 0.01;
-        positionsArray[i + 1] += (Math.random() - 0.5) * 0.01;
-        positionsArray[i + 2] += (Math.random() - 0.5) * 0.01;
-      }
-      particlesGeometry.attributes.position.needsUpdate = true;
-
-      // Обновление рендера и управления
       controls.update();
       renderer.render(scene, camera);
     }
