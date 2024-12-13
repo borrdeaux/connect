@@ -4,9 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Particle Animation</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
   <script type="module">
-    import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+    // Импорт модулей из CDN
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.module.js";
+    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.134.0/examples/jsm/controls/OrbitControls.js";
 
     // Создание сцены, камеры и рендера
     const scene = new THREE.Scene();
@@ -71,13 +80,5 @@
       camera.updateProjectionMatrix();
     });
   </script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
 </body>
 </html>
